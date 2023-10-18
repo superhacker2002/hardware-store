@@ -1,6 +1,9 @@
 package repository
 
-import "database/sql"
+import (
+	"database/sql"
+	"fmt"
+)
 
 type PostgresRepository struct {
 	db *sql.DB
@@ -56,6 +59,8 @@ func (p PostgresRepository) ShelfProducts() ([]ShelfProduct, error) {
 	if err := rows.Err(); err != nil {
 		return nil, err
 	}
+
+	fmt.Println(shelfProducts)
 
 	return shelfProducts, nil
 }
