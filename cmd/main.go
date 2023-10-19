@@ -4,8 +4,10 @@ import (
 	"database/sql"
 	_ "github.com/lib/pq"
 	"github.com/superhacker2002/shop/internal/config"
-	"github.com/superhacker2002/shop/internal/repository"
+	"github.com/superhacker2002/shop/internal/controller"
+	"github.com/superhacker2002/shop/internal/repository/postgresql"
 	"log"
+	"os"
 )
 
 func main() {
@@ -20,9 +22,11 @@ func main() {
 	}
 	defer db.Close()
 
-	repo := repository.New(db)
-	_, err = repo.ShelfProducts()
+	orders := os.Args[1:]
+
+	repo := postgresql.New(db)
+	err = controller.New(repo).ShelfProducts(orders)
 	if err != nil {
-		log.Fatalf("failed to get info from database: %v", err)
+		log.Fatalf("failed to get orders info: %v", err)
 	}
 }

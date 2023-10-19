@@ -1,28 +1,21 @@
-package repository
+package postgresql
 
 import (
 	"database/sql"
 	"fmt"
+	"github.com/superhacker2002/shop/internal/entity"
 )
 
 type PostgresRepository struct {
 	db *sql.DB
 }
 
-type ShelfProduct struct {
-	ShelfName   string
-	ProductName string
-	ProductID   int
-	OrderID     int
-	Quantity    int
-}
-
 func New(db *sql.DB) PostgresRepository {
 	return PostgresRepository{db: db}
 }
 
-func (p PostgresRepository) ShelfProducts() ([]ShelfProduct, error) {
-	query := `SELECT
+func (p PostgresRepository) ShelfProducts(orders string) ([]entity.ShelfProduct, error) {
+	query := fmt.Sprintf(`SELECT
 	s.name AS "Стеллаж",
 		p.name AS "Товар",
 		p.id AS "id",
@@ -35,9 +28,9 @@ func (p PostgresRepository) ShelfProducts() ([]ShelfProduct, error) {
 	JOIN
 	orders o ON p.id = o.product_id
 	WHERE
-	o.id IN (10, 11, 14, 15)
+	o.id IN (%s)
 	ORDER BY
-	s.name ASC;`
+	s.name ASC;`, orders)
 
 	rows, err := p.db.Query(query)
 	if err != nil {
@@ -45,10 +38,10 @@ func (p PostgresRepository) ShelfProducts() ([]ShelfProduct, error) {
 	}
 	defer rows.Close()
 
-	var shelfProducts []ShelfProduct
+	var shelfProducts []entity.ShelfProduct
 
 	for rows.Next() {
-		var sp ShelfProduct
+		var sp entity.ShelfProduct
 		err = rows.Scan(&sp.ShelfName, &sp.ProductName, &sp.ProductID, &sp.OrderID, &sp.Quantity)
 		if err != nil {
 			return nil, err
