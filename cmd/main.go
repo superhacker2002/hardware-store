@@ -8,7 +8,6 @@ import (
 	"github.com/superhacker2002/shop/internal/repository/postgresql"
 	"log"
 	"os"
-	"strings"
 )
 
 func main() {
@@ -25,10 +24,12 @@ func main() {
 	defer db.Close()
 
 	orders := os.Args[1:]
-	ordersIDs := strings.Split(orders[0], ",")
+	if len(orders) == 0 {
+		log.Fatalf("order ids were not specified when running the program")
+	}
 
 	repo := postgresql.New(db)
-	err = controller.New(repo).ShelfProducts(ordersIDs)
+	err = controller.New(repo).ShelfProducts(orders[0])
 	if err != nil {
 		log.Fatalf("failed to get orders info: %v", err)
 	}

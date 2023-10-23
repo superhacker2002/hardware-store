@@ -15,22 +15,12 @@ func New(db *sql.DB) PostgresRepository {
 }
 
 func (p PostgresRepository) ShelfProducts(orders []int) ([]entity.ShelfProduct, error) {
-	//query := `SELECT s.name AS "Стеллаж",
-	//				p.name AS "Товар",
-	//				p.id AS "id",
-	//				o.id AS "заказ",
-	//				o.quantity AS "шт"
-	//FROM shelves s
-	//JOIN products p ON s.id = p.shelf_id
-	//JOIN orders o ON p.id = o.product_id
-	//WHERE o.id = ANY($1::int[])
-	//ORDER BY s.name ASC;`
-
-	query := `SELECT s.name, p.name, p.id, o.id, o.quantity
+	query := `SELECT s.name, p.name, p.id, o.order_number, o.quantity
 	FROM shelves s
 	JOIN products p ON s.id = p.shelf_id
 	JOIN orders o ON p.id = o.product_id
-	WHERE order_number = ANY($1)`
+	WHERE order_number = ANY($1)
+	ORDER BY s.name ASC`
 
 	rows, err := p.db.Query(query, pq.Array(orders))
 	if err != nil {
