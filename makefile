@@ -1,4 +1,4 @@
-run_db:
+db:
 	docker run \
     --rm --name postgres \
     -e POSTGRES_USER=postgres \

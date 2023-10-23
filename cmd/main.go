@@ -8,9 +8,11 @@ import (
 	"github.com/superhacker2002/shop/internal/repository/postgresql"
 	"log"
 	"os"
+	"strings"
 )
 
 func main() {
+	log.SetFlags(log.Lshortfile)
 	cfg, err := config.New()
 	if err != nil {
 		log.Fatalf("failed to load config %v", err)
@@ -23,9 +25,10 @@ func main() {
 	defer db.Close()
 
 	orders := os.Args[1:]
+	ordersIDs := strings.Split(orders[0], ",")
 
 	repo := postgresql.New(db)
-	err = controller.New(repo).ShelfProducts(orders)
+	err = controller.New(repo).ShelfProducts(ordersIDs)
 	if err != nil {
 		log.Fatalf("failed to get orders info: %v", err)
 	}

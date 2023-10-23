@@ -8,7 +8,7 @@ import (
 )
 
 type Config struct {
-	Db string `env:"postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"`
+	Db string `env:"DATABASE_URL,default=postgres://postgres:postgres@localhost:5432/postgres?sslmode=disable"`
 }
 
 func New() (Config, error) {

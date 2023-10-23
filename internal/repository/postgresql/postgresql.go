@@ -2,7 +2,7 @@ package postgresql
 
 import (
 	"database/sql"
-	"fmt"
+	"github.com/lib/pq"
 	"github.com/superhacker2002/shop/internal/entity"
 )
 
@@ -14,25 +14,25 @@ func New(db *sql.DB) PostgresRepository {
 	return PostgresRepository{db: db}
 }
 
-func (p PostgresRepository) ShelfProducts(orders string) ([]entity.ShelfProduct, error) {
-	query := fmt.Sprintf(`SELECT
-	s.name AS "Стеллаж",
-		p.name AS "Товар",
-		p.id AS "id",
-		o.id AS "заказ",
-		o.quantity AS "шт"
-	FROM
-	shelves s
-	JOIN
-	products p ON s.id = p.shelf_id
-	JOIN
-	orders o ON p.id = o.product_id
-	WHERE
-	o.id IN (%s)
-	ORDER BY
-	s.name ASC;`, orders)
+func (p PostgresRepository) ShelfProducts(orders []int) ([]entity.ShelfProduct, error) {
+	//query := `SELECT s.name AS "Стеллаж",
+	//				p.name AS "Товар",
+	//				p.id AS "id",
+	//				o.id AS "заказ",
+	//				o.quantity AS "шт"
+	//FROM shelves s
+	//JOIN products p ON s.id = p.shelf_id
+	//JOIN orders o ON p.id = o.product_id
+	//WHERE o.id = ANY($1::int[])
+	//ORDER BY s.name ASC;`
 
-	rows, err := p.db.Query(query)
+	query := `SELECT s.name, p.name, p.id, o.id, o.quantity
+	FROM shelves s
+	JOIN products p ON s.id = p.shelf_id
+	JOIN orders o ON p.id = o.product_id
+	WHERE order_number = ANY($1)`
+
+	rows, err := p.db.Query(query, pq.Array(orders))
 	if err != nil {
 		return nil, err
 	}
@@ -49,11 +49,9 @@ func (p PostgresRepository) ShelfProducts(orders string) ([]entity.ShelfProduct,
 		shelfProducts = append(shelfProducts, sp)
 	}
 
-	if err := rows.Err(); err != nil {
+	if err = rows.Err(); err != nil {
 		return nil, err
 	}
-
-	fmt.Println(shelfProducts)
 
 	return shelfProducts, nil
 }

@@ -11,6 +11,7 @@ CREATE TABLE shelves (
 
 CREATE TABLE orders (
     id SERIAL PRIMARY KEY,
+    order_number INTEGER NOT NULL,
     product_id INTEGER NOT NULL,
     quantity INTEGER NOT NULL
 );
