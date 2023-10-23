@@ -3,6 +3,7 @@ package ui
 import (
 	"fmt"
 	"github.com/superhacker2002/shop/internal/entity"
+	"strings"
 )
 
 func OutputData(orderNums string, orders []entity.ShelfProduct) {
@@ -18,8 +19,12 @@ func OutputData(orderNums string, orders []entity.ShelfProduct) {
 			fmt.Println("===Стеллаж", order.ShelfName)
 		}
 		fmt.Printf("%s (id=%d)\n"+
-			"заказ %d, %d шт\n\n",
+			"заказ %d, %d шт\n",
 			order.ProductName, order.ProductID, order.OrderID, order.Quantity)
+		if len(order.AdditionalShelves) != 0 {
+			fmt.Printf("доп стеллаж: %s\n", strings.Join(order.AdditionalShelves, ","))
+		}
+		fmt.Print("\n")
 		shelf = order.ShelfName
 	}
 }

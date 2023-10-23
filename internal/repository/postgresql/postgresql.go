@@ -15,7 +15,11 @@ func New(db *sql.DB) PostgresRepository {
 }
 
 func (p PostgresRepository) ShelfProducts(orders []string) ([]entity.ShelfProduct, error) {
-	query := `SELECT s.name, p.name, p.id, o.order_number, o.quantity
+	query := `SELECT s.name, p.name, p.id, o.order_number, o.quantity,
+       ARRAY(SELECT s2.name
+		FROM shelves s2
+		JOIN products p2 on s2.id = p2.shelf_id
+		WHERE p2.main_shelf = false AND p2.name = p.name)
 	FROM shelves s
 	JOIN products p ON s.id = p.shelf_id
 	JOIN orders o ON p.id = o.product_id
@@ -32,7 +36,9 @@ func (p PostgresRepository) ShelfProducts(orders []string) ([]entity.ShelfProduc
 
 	for rows.Next() {
 		var sp entity.ShelfProduct
-		err = rows.Scan(&sp.ShelfName, &sp.ProductName, &sp.ProductID, &sp.OrderID, &sp.Quantity)
+		err = rows.Scan(&sp.ShelfName, &sp.ProductName,
+			&sp.ProductID, &sp.OrderID,
+			&sp.Quantity, pq.Array(&sp.AdditionalShelves))
 		if err != nil {
 			return nil, err
 		}

@@ -1,7 +1,8 @@
 CREATE TABLE products (
     id SERIAL PRIMARY KEY,
     name VARCHAR(50) NOT NULL,
-    shelf_id INTEGER NOT NULL
+    shelf_id INTEGER NOT NULL,
+    main_shelf BOOLEAN
 );
 
 CREATE TABLE shelves (

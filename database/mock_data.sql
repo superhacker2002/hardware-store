@@ -1,14 +1,17 @@
-INSERT INTO shelves (name) VALUES ('A'), ('Б'), ('Ж');
+INSERT INTO shelves (name) VALUES ('A'), ('Б'), ('В'), ('Ж'), ('З');
 
 
 
-INSERT INTO products (name, shelf_id) VALUES
-                                          ('Ноутбук', 1),
-                                          ('Телевизор', 1),
-                                          ('Телефон', 2),
-                                          ('Системный блок', 3),
-                                          ('Часы', 3),
-                                          ('Микрофон', 3);
+INSERT INTO products (name, shelf_id, main_shelf) VALUES
+                                          ('Ноутбук', 1, true),
+                                          ('Телевизор', 1, true),
+                                          ('Телефон', 2, true),
+                                          ('Системный блок', 4, true),
+                                          ('Часы', 4, true),
+                                          ('Микрофон', 4, true),
+                                          ('Телефон', 3, false),
+                                          ('Телефон', 5, false),
+                                          ('Часы', 1, false);
 
 INSERT INTO orders (product_id, quantity, order_number) VALUES
                                                             (1, 2, 10),
@@ -18,4 +21,10 @@ INSERT INTO orders (product_id, quantity, order_number) VALUES
                                                             (1, 3, 14),
                                                             (4, 4, 14),
                                                             (5, 1, 15);
+
+SELECT s2.name
+FROM shelves s2
+         JOIN products p2 on s2.id = p.shelf_id
+WHERE p2.main_shelf = false AND p2.name = p.name
+
 
