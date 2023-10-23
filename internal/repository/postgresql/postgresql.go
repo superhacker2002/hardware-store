@@ -14,7 +14,7 @@ func New(db *sql.DB) PostgresRepository {
 	return PostgresRepository{db: db}
 }
 
-func (p PostgresRepository) ShelfProducts(orders []int) ([]entity.ShelfProduct, error) {
+func (p PostgresRepository) ShelfProducts(orders []string) ([]entity.ShelfProduct, error) {
 	query := `SELECT s.name, p.name, p.id, o.order_number, o.quantity
 	FROM shelves s
 	JOIN products p ON s.id = p.shelf_id
